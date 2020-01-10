@@ -10,14 +10,11 @@ import ch.qos.logback.core.net.SyslogOutputStream;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-/**
- * This appender can be used to send messages to a remote syslog daemon. <p> For
- * more information about this appender, please refer to the online manual at
- * http://logback.qos.ch/manual/appenders.html#SyslogAppender
- */
+
 public class SyslogAppender extends SyslogAppenderBase<IAccessEvent> {
+
   // Default 'common' pattern
-  static final public String DEFAULT_SUFFIX_PATTERN = "%h %l %u %user %date \"%r\" %s %b";
+  private static final String DEFAULT_SUFFIX_PATTERN = "%h %l %u %user %date \"%r\" %s %b";
 
   @Override
   public Layout<IAccessEvent> buildLayout() {
@@ -42,7 +39,7 @@ public class SyslogAppender extends SyslogAppenderBase<IAccessEvent> {
     return SyslogStartConverter.SYSLOG_ACCESS_SEVERITY;
   }
 
-  String getPrefixPattern() {
+  private String getPrefixPattern() {
     return "%syslogStart{" + getFacility() + "}";
   }
 }

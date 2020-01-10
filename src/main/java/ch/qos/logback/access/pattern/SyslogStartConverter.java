@@ -1,16 +1,4 @@
-/**
- * Logback: the reliable, generic, fast and flexible logging framework.
- * Copyright (C) 1999-2015, QOS.ch. All rights reserved.
- *
- * This program and the accompanying materials are dual-licensed under
- * either the terms of the Eclipse Public License v1.0 as published by
- * the Eclipse Foundation
- *
- *   or (per the licensee's choosing)
- *
- * under the terms of the GNU Lesser General Public License version 2.1
- * as published by the Free Software Foundation.
- */
+
 package ch.qos.logback.access.pattern;
 
 import ch.qos.logback.access.spi.IAccessEvent;
@@ -24,17 +12,18 @@ import java.util.Date;
 import java.util.Locale;
 
 public class SyslogStartConverter extends AccessConverter {
+
   // No severity per se for access logs, always using INFO messages
   public static final int SYSLOG_ACCESS_SEVERITY = SyslogConstants.ERROR_SEVERITY;
 
-  long lastTimestamp = -1;
-  String timesmapStr = null;
-  SimpleDateFormat simpleMonthFormat;
-  SimpleDateFormat simpleTimeFormat;
+  private long lastTimestamp = -1;
+  private String timestampStr = null;
+  private SimpleDateFormat simpleMonthFormat;
+  private SimpleDateFormat simpleTimeFormat;
   private final Calendar calendar = Calendar.getInstance(Locale.US);
 
-  String localHostName;
-  int facility;
+  private String localHostName;
+  private int facility;
 
   public void start() {
     int errorCount = 0;
@@ -63,28 +52,19 @@ public class SyslogStartConverter extends AccessConverter {
   }
 
   public String convert(IAccessEvent event) {
-    StringBuilder sb = new StringBuilder();
 
     int pri = facility + SYSLOG_ACCESS_SEVERITY;
 
-    sb.append("<");
-    sb.append(pri);
-    sb.append(">");
-    sb.append(computeTimeStampString(event.getTimeStamp()));
-    sb.append(' ');
-    sb.append(localHostName);
-    sb.append(' ');
-
-    return sb.toString();
+    return "<"
+        + pri
+        + ">"
+        + computeTimeStampString(event.getTimeStamp())
+        + ' '
+        + localHostName
+        + ' ';
   }
 
-  /**
-   * This method gets the network name of the machine we are running on.
-   * Returns "UNKNOWN_LOCALHOST" in the unlikely case where the host name
-   * cannot be found.
-   * @return String the name of the local host
-   */
-  public String getLocalHostname() {
+  private String getLocalHostname() {
     try {
       InetAddress addr = InetAddress.getLocalHost();
       return addr.getHostName();
@@ -94,7 +74,7 @@ public class SyslogStartConverter extends AccessConverter {
     }
   }
 
-  String computeTimeStampString(long now) {
+  private String computeTimeStampString(long now) {
     synchronized (this) {
       // Since the formatted output is only precise to the second, we can use the same cached string if the
       // current
@@ -103,10 +83,11 @@ public class SyslogStartConverter extends AccessConverter {
         lastTimestamp = now / 1000;
         Date nowDate = new Date(now);
         calendar.setTime(nowDate);
-        timesmapStr = String.format("%s %2d %s", simpleMonthFormat.format(nowDate), calendar.get(Calendar.DAY_OF_MONTH),
-            simpleTimeFormat.format(nowDate));
+        timestampStr = String
+            .format("%s %2d %s", simpleMonthFormat.format(nowDate), calendar.get(Calendar.DAY_OF_MONTH),
+                simpleTimeFormat.format(nowDate));
       }
-      return timesmapStr;
+      return timestampStr;
     }
   }
 }
