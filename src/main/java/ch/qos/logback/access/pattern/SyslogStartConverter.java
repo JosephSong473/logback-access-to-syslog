@@ -25,7 +25,7 @@ import java.util.Locale;
 
 public class SyslogStartConverter extends AccessConverter {
   // No severity per se for access logs, always using INFO messages
-  public static final int SYSLOG_ACCESS_SEVERITY = SyslogConstants.INFO_SEVERITY;
+  public static final int SYSLOG_ACCESS_SEVERITY = SyslogConstants.ERROR_SEVERITY;
 
   long lastTimestamp = -1;
   String timesmapStr = null;
